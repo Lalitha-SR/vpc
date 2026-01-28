@@ -23,4 +23,4 @@ variable "web_instance_name" {
 }
 
 
-variable "dynamodb_table_arn" {}
+# variable "dynamodb_table_arn" {}
