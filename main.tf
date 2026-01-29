@@ -44,8 +44,9 @@ module "dynamodb_endpoint" {
   route_table_ids = [module.vpc.private_route_table_id]
 }
 
-module "user_data" {
-  source = "./modules/user_data"
+module "web_user_data" {
+  source   = "./modules/user_data"
+  app_name = "web"
 }
 
 module "web_ec2" {
@@ -55,9 +56,65 @@ module "web_ec2" {
   subnet_id            = module.vpc.public_subnet_ids[0]
   sg_id                = module.security.ec2_sg_id
   iam_instance_profile = module.iam_dynamodb.instance_profile_name
-  user_data            = module.user_data.user_data
+  user_data            = module.web_user_data.user_data
   key_name             = var.key_name
   public_ip            = true
-  name = "${var.project_name}-${var.web_instance_name}"
+  name                 = "${var.project_name}-web"
 }
 
+module "api_user_data" {
+  source   = "./modules/user_data"
+  app_name = "api"
+}
+
+module "api_ec2" {
+  source               = "./modules/ec2"
+  ami                  = var.ami_id
+  instance_type        = var.instance_type
+  subnet_id            = module.vpc.public_subnet_ids[1]
+  sg_id                = module.security.ec2_sg_id
+  iam_instance_profile = module.iam_dynamodb.instance_profile_name
+  user_data            = module.api_user_data.user_data
+  key_name             = var.key_name
+  public_ip            = true
+  name                 = "${var.project_name}-api"
+}
+
+module "admin_user_data" {
+  source   = "./modules/user_data"
+  app_name = "admin"
+}
+
+module "admin_ec2" {
+  source               = "./modules/ec2"
+  ami                  = var.ami_id
+  instance_type        = var.instance_type
+  subnet_id            = module.vpc.public_subnet_ids[1]
+  sg_id                = module.security.ec2_sg_id
+  iam_instance_profile = module.iam_dynamodb.instance_profile_name
+  user_data            = module.admin_user_data.user_data
+  key_name             = var.key_name
+  public_ip            = true
+  name                 = "${var.project_name}-admin"
+}
+
+# Web attachment
+resource "aws_lb_target_group_attachment" "web" {
+  target_group_arn = module.alb.web_tg_arn
+  target_id        = module.web_ec2.instance_id
+  port             = 80
+}
+
+# API attachment
+resource "aws_lb_target_group_attachment" "api" {
+  target_group_arn = module.alb.api_tg_arn
+  target_id        = module.api_ec2.instance_id
+  port             = 80
+}
+
+# Admin attachment
+resource "aws_lb_target_group_attachment" "admin" {
+  target_group_arn = module.alb.admin_tg_arn
+  target_id        = module.admin_ec2.instance_id
+  port             = 80
+}
