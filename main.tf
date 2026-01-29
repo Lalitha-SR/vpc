@@ -59,7 +59,7 @@ module "web_ec2" {
   user_data            = module.web_user_data.user_data
   key_name             = var.key_name
   public_ip            = true
-  name                 = "${var.project_name}-web"
+  name                 = "${var.project_name}-web1"
 }
 
 module "api_user_data" {
@@ -77,7 +77,7 @@ module "api_ec2" {
   user_data            = module.api_user_data.user_data
   key_name             = var.key_name
   public_ip            = true
-  name                 = "${var.project_name}-api"
+  name                 = "${var.project_name}-api1"
 }
 
 module "admin_user_data" {
@@ -95,7 +95,7 @@ module "admin_ec2" {
   user_data            = module.admin_user_data.user_data
   key_name             = var.key_name
   public_ip            = true
-  name                 = "${var.project_name}-admin"
+  name                 = "${var.project_name}-admin1"
 }
 
 # Web attachment
