@@ -41,7 +41,7 @@ module "dynamodb_endpoint" {
   vpc_id          = module.vpc.vpc_id
   region          = var.region
   project_name    = var.project_name
-  route_table_ids = [module.vpc.private_route_table_id]
+  route_table_ids = [module.vpc.private_route_table_id, module.vpc.public_route_table_id]
 }
 
 module "web_user_data" {

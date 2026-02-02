@@ -22,11 +22,11 @@ resource "aws_iam_policy" "dynamodb_policy" {
       Effect = "Allow"
       Action = [
         "dynamodb:GetItem",
-        "dynamodb:PutItem",
-        "dynamodb:UpdateItem",
-        "dynamodb:DeleteItem",
+        # "dynamodb:PutItem",
+        # "dynamodb:UpdateItem",
+        # "dynamodb:DeleteItem",
         "dynamodb:Scan",
-        "dynamodb:Query"
+        # "dynamodb:Query"
       ]
       Resource = var.dynamodb_table_arn
     }]
